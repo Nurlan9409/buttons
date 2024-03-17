@@ -4,15 +4,22 @@ from db_base import Database
 from aiogram import Bot, Dispatcher, executor, types
 from dotenv import load_dotenv
 load_dotenv()
-from buttons import button_1,taom_menu,button1,fast_food_menu,water_menu
+from buttons import button_1, taom_menu, fast_food_menu, water_menu
+from buttons import keyboard, keyboard_1
+from buttons import inline_kb4
 
 API_TOKEN = os.getenv('BOT_TOKEN')
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 
-# Initialize bot and dispatcher
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
+
+@dp.callback_query_handler(lambda c: c.data == "btn_geo")
+async def process_callback_button_menu(callback_query: types.CallbackQuery, message: types.Message):
+    lat = message.location.latitude
+    lon = message.location.longitude
+    await bot.answer_callback_query(callback_query.id)
+    await bot.send_message(callback_query.from_user.id, lat, lon)
 
 
 @dp.message_handler(commands=['start', 'help'])
@@ -23,45 +30,127 @@ async def send_welcome(message: types.Message):
     chat_id = message.chat.id
     check_query ="""select * from info_users where chat_id = '{chat_id}'"""
     if len(Database.connect(check_query,"select")) >= 1:
-        await message.answer(f"Hey whats_up{username}", reply_markup= button1)
+        await message.answer(f"Hey whats_up{username}", reply_markup= button_1)
     else:
 
         print(f"Username: {username} star_bot")
         query =f"""insert into info_users(first_name, last_name, username,chat_id) values ('{first_name}', '{last_name}', '{username}','{chat_id}')"""
         print(f"{username} {Database.connect(query,"insert")}")
-        await message.answer(f"Assalomualeykum menuni tanlang {username}",reply_markup= button1)
+        await message.answer(f"Assalomualeykum menuni tanlang {username}",reply_markup= button_1)
 
 
 
 
 
-@dp.message_handler()
-async def echo(message: types.Message):
-    user_username = message.from_user.username
-
-    await message.answer(message.text)
-
-
-@dp.message_handler(lambda message:message.text =='Menu')
+@dp.message_handler(lambda message : message.text == 'Menu')
 async def menu(message: types.Message):
-     await message.answer('Menu', reply_markup=button_1)
-     await message.answer("Нажмите на кнопку", reply_markup=button_1)
+    await message.answer('Menu', reply_markup=button_1)
 
 
 @dp.message_handler(lambda message: message.text == "Taomlar")
 async def taomlar(message: types.Message):
      await message.answer("Taomni tanlang", reply_markup=taom_menu)
+
+@dp.message_handler(lambda message: message.text== 'Toy oshi')
+async def osh(message: types.Message):
+    await message.answer('Porsiyani Tanlang', reply_markup=keyboard)
+
+@dp.message_handler(lambda message: message.text == 'Yarim porsiya')
+async def porsiya(message: types.Message):
+    await message.answer('Zakazingiz qabul qilindi, Geolokasiya jonating', reply_markup=inline_kb4)
+
+
+@dp.message_handler(lambda message: message.text== 'Norin')
+async def norin(message: types.Message):
+    await message.answer('Porsiyani Tanlang', reply_markup=keyboard)
+
+
+@dp.message_handler(lambda message: message.text== 'Monti')
+async def monti(message: types.Message):
+    await message.answer('Porsiyani Tanlang', reply_markup=keyboard)
+
+@dp.message_handler(lambda message: message.text== 'Beshbarmoq')
+async def beshbarmoq(message: types.Message):
+    await message.answer('Porsiyani Tanlang', reply_markup=keyboard)
+
+
+
 @dp.message_handler(lambda message: message.text == "Fast_food")
-async def taomlar(message: types.Message):
+async def fast_food(message: types.Message):
      await message.answer("Fastfoodni tanlang", reply_markup=fast_food_menu)
 
+@dp.message_handler(lambda message: message.text == 'Lavash')
+async def lavash(message: types.Message):
+    await message.answer('Lavash Turini Tanlang', reply_markup=keyboard_1)
+
+
+@dp.message_handler(lambda message: message.text == 'Donar')
+async def donar(message: types.Message):
+    await message.answer('Donar Turini Tanlang', reply_markup=keyboard_1)
+
+
+@dp.message_handler(lambda message: message.text == 'Non kabob')
+async def non_kabob(message: types.Message):
+    await message.answer('Non kabob Turini Tanlang', reply_markup=keyboard_1)
+
+
+@dp.message_handler(lambda message: message.text == 'Burger')
+async def burger(message: types.Message):
+    await message.answer('Burger Turini Tanlang', reply_markup=keyboard_1)
+
+
+
 @dp.message_handler(lambda message: message.text == "Ichimliklar")
-async def taomlar(message: types.Message):
+async def ichimliklar(message: types.Message):
      await message.answer("Ichimlikni tanlang", reply_markup=water_menu)
 
 @dp.message_handler(lambda message:message.text =="Back")
 async def back_menu(message: types.Message):
      await message.answer("Menuga qaytish",reply_markup=button_1)
+
+
+class MyClass:
+    location = None
+
+    @dp.callback_query_handler(lambda c: c.data == "btn_geo")
+    async def process_callback_button_menu(callback_query: types.CallbackQuery):
+        MyClass.location = callback_query.location
+        await bot.answer_callback_query(callback_query.id)
+        await bot.send_message(callback_query.from_user.id, "Спасибо! Теперь вы можете отправить мне сообщение с вашим вопросом.")
+
+@dp.message_handler(content_types=types.ContentTypes.TEXT)
+async def handle_text_message(message: types.Message):
+    if MyClass.location is not None:
+        lat = MyClass.location.latitude
+        lon = MyClass.location.longitude
+        MyClass.location = None
+        await bot.send_message(message.chat.id, f"Sizning geolokasiyangiz: {lat}, {lon}")
+    else:
+
+        await bot.send_message(message.chat.id, "Iltimos geolokasiya jonating")
+
+@dp.message_handler(commands=['data'])
+async def data_callback(message: types.Message):
+    if message.from_user.id ==[810523537]:
+        await message.reply("Hi admin")
+    else:
+        await message.reply("Bunday maklumot topilmadi")
+
+
+
+@dp.message_handler(commands=['data'])
+async def data_callback(message: types.Message):
+    query = """select * from admins"""
+    admins = []
+    for i in  Database.connect(query,"select"):
+       admins.append(i[1])
+    if message.from_user.id in admins:
+        await message.reply("Hi admin")
+    else:
+        await message.reply("Bunday maklumot topilmadi")
+
+
+
 
 
 
