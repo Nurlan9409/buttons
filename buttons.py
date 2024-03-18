@@ -1,5 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, inline_keyboard
 from aiogram import types
 
 
@@ -10,6 +10,16 @@ inline3 = types.InlineKeyboardButton(text=" Ikki kishilik", callback_data="Taom_
 inline4 = types.InlineKeyboardButton(text=" Ortga", callback_data="Taom_porsiya")
 keyboard.add(inline1, inline2,inline3,
              inline4)
+
+pay_type = types.InlineKeyboardMarkup()
+pay_type2=types.InlineKeyboardButton("click",callback_data="pay_type")
+pay_type3=types.InlineKeyboardButton("pay_me",callback_data="pay_type")
+pay_type4=types.InlineKeyboardButton("apelsin",callback_data="pay_type")
+pay_type5=types.InlineKeyboardButton("uzum_bank",callback_data="pay_type")
+pay_type6=types.InlineKeyboardButton("apelsin",callback_data="pay_type")
+keyboard.add(
+             pay_type2,pay_type3,
+             pay_type4,pay_type5,pay_type6)
 
 
 
@@ -40,20 +50,32 @@ fast_food_menu.add(KeyboardButton('Back'))
 water_menu = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 water_menu.add (KeyboardButton('Milliy Kola'))
 water_menu.add (KeyboardButton('Dinay '))
-water_menu.add (KeyboardButton('Ace tea'))
-water_menu.add (KeyboardButton('Limon choy'))
+water_menu.add (KeyboardButton('Ice tea'))
 water_menu.add(KeyboardButton('Back'))
 
-but = types.InlineKeyboardButton("Geolokasiyani jonating", request_location=True, callback_data='btn_geo')
+but = types.InlineKeyboardButton("geolokasiya", request_location=True, callback_data='geolokasiya')
 
-inline_kb4 = InlineKeyboardMarkup().add(but)
+inline_kb4 = InlineKeyboardMarkup()
+inline_kb4= types.InlineKeyboardButton("geolokasiya jonating", callback_data='btn_geo')
 
 keyboard_1 = types.InlineKeyboardMarkup()
-inline_1 = types.InlineKeyboardButton(text=" Small", callback_data="lavash turi")
-inline_2 = types.InlineKeyboardButton(text=" Big", callback_data="lavash turi")
-inline_4 = types.InlineKeyboardButton(text=" Ortga", callback_data="lavash turi")
-keyboard.add(inline_1, inline_2,
-             inline_4)
+inline_1 = types.InlineKeyboardButton(text=" Small", callback_data="fast_food turi")
+inline_2= types.InlineKeyboardButton(text=" Standart", callback_data="fast_food turi")
+inline_3 = types.InlineKeyboardButton(text=" Big", callback_data="fast_food turi")
+inline_4 = types.InlineKeyboardButton(text=" Ortga", callback_data="fast_food turi")
+keyboard_1.add(inline_1, inline_2,
+               inline_3, inline_4)
+
+
+
+water = types.InlineKeyboardMarkup()
+water_size = types.InlineKeyboardButton(text="0.5l")
+water_size1= types.InlineKeyboardButton(text="1l")
+water_size2 = types.InlineKeyboardButton(text="1.5l")
+water.add(water_size,
+          water_size1,
+          water_size2)
+
 
 
 
